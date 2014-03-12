@@ -1,0 +1,20 @@
+{
+  "main": "index.html",
+  "name": "Nanjangpan",
+  "window": {
+    "title": "Nanjangpan",
+    "toolbar": false,
+    "frame": true,
+    "width": 1024,
+    "height": 768,
+    "position": "center",
+    "min_width": 640,
+    "min_height": 480,
+    "max_width": 10000,
+    "max_height": 10000,
+    "resizable": true
+  },
+  "webkit": {
+    "plugin": true
+  }
+}

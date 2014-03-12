@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+  </style>
+</head>
+<body>
+  <script src="js/jquery-1.11.0.min.js"></script>
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/croquis.js"></script>
+  <script src="js/viewport.js"></script>
+  <script>
+  var DEFAULT_CANVAS_WIDTH = 400;
+  var DEFAULT_CANVAS_HEIGHT = 300;
+  var croquis = new Croquis();
+  ;(function () { // manipulate croquis
+    croquis.lockHistory();
+    croquis.setCanvasSize(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
+    croquis.addLayer();
+    croquis.fillLayer('#fff');
+    croquis.addLayer();
+    croquis.selectLayer(1);
+    croquis.unlockHistory();
+    croquis.setToolStabilizeLevel(10);
+    croquis.setToolStabilizeWeight(0.5);
+  })();
+  var viewport = makeViewport(croquis,
+    {
+      width: '100%',
+      height: '100%',
+      background: '#333'
+    }, function (viewportDocument) {
+    var relativeCoord = viewport.croquisElement.relativeCoord;
+    function down(e) {
+      var rc = relativeCoord(e.clientX, e.clientY);
+      croquis.down(rc.x, rc.y);
+      $(viewportDocument).on('mousemove', move)
+                         .on('mouseup', up);
+    }
+    function move(e) {
+      var rc = relativeCoord(e.clientX, e.clientY);
+      croquis.move(rc.x, rc.y);
+    }
+    function up(e) {
+      var rc = relativeCoord(e.clientX, e.clientY);
+      croquis.up(rc.x, rc.y);
+      $(viewportDocument).off('mousemove', move)
+                         .off('mouseup', up);
+    }
+    $(viewportDocument).on('mousedown', down);
+  });
+  $(document.body).append(viewport);
+  </script>
+</body>
+</html>
