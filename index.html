@@ -11,7 +11,7 @@
 </head>
 <body>
   <script src="js/jquery-1.11.0.min.js"></script>
-  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/croquis.js"></script>
   <script src="js/viewport.js"></script>
@@ -45,6 +45,7 @@
     function down(e) {
       var rc = relativeCoord(e.clientX, e.clientY);
       croquis.down(rc.x, rc.y, pressure());
+      $(viewportDocument.body).parent().css('cursor', 'none');
       $(viewportDocument).on('mousemove', move)
                          .on('mouseup', up);
     }
@@ -55,6 +56,7 @@
     function up(e) {
       var rc = relativeCoord(e.clientX, e.clientY);
       croquis.up(rc.x, rc.y, pressure());
+      $(viewportDocument.body).parent().css('cursor', 'crosshair');
       $(viewportDocument).off('mousemove', move)
                          .off('mouseup', up);
     }
