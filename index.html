@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <style>
   html, body {
     margin: 0;
@@ -10,6 +11,25 @@
   </style>
 </head>
 <body>
+  <div id="viewport"></div>
+  <button class="btn btn-md" style="position: absolute;" data-toggle="modal" data-target="#brush_setting">
+    브러시 설정
+  </button>
+  <div class="modal fade" style="overflow: hidden;" id="brush_setting" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">브러시 설정</h4>
+        </div>
+        <div class="modal-body" style="overflow: auto;">
+          todo
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">확인</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="js/jquery-1.11.0.min.js"></script>
   <link rel="stylesheet" href="css/bootstrap.min.css"/>
   <script src="js/bootstrap.min.js"></script>
@@ -62,7 +82,19 @@
     }
     $(viewportDocument).on('mousedown', down);
   });
-  $(document.body).append(viewport);
+  $('#viewport').replaceWith(viewport);
+  function fitModalBody(modal) {
+    var header = $('.modal-header', modal);
+    var body = $('.modal-body', modal);
+    var footer = $('.modal-footer', modal);
+    var headerheight = parseInt(header.css('height')) + parseInt(header.css('padding-top')) + parseInt(header.css('padding-bottom'));
+    var bodypaddings = parseInt(body.css('padding-top')) + parseInt(body.css('padding-bottom'));
+    var footerheight = parseInt(footer.css('height'));
+    var height = $(window).height() - headerheight - bodypaddings - footerheight;
+    return body.css('max-height', '' + height + 'px');
+  }
+  $('.modal').on('shown.bs.modal', fitModalBody.bind(null, ($('.modal'))));
+  $(window).resize(fitModalBody.bind(null, ($('.modal'))));
   </script>
 </body>
 </html>
