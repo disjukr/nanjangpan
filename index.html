@@ -95,8 +95,8 @@
     var modalWindow = modalIframe.contentWindow;
     modalWindow.init(croquis);
     $('#njp-modal .modal-title').get(0).innerHTML = modalWindow.title;
-    $(modalIframe).css('width', '100%');
-    $(modalIframe).css('height', $(modalIframe.contentWindow.document).height());
+    $(modalIframe).css('width', '100%')
+                  .css('height', $(modalWindow.document).height());
     fitModalBody($('#njp-modal'));
   };
   function showModal(path) {
