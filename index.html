@@ -12,20 +12,17 @@
 </head>
 <body>
   <div id="viewport"></div>
-  <button class="btn btn-md" style="position: absolute;" data-toggle="modal" data-target="#brush_setting">
-    브러시 설정
-  </button>
-  <div class="modal fade" style="overflow: hidden;" id="brush_setting" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" style="overflow: hidden;" id="njp-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">브러시 설정</h4>
+          <h4 class="modal-title"></h4>
         </div>
-        <div class="modal-body" style="overflow: auto;">
-          todo
+        <div class="modal-body" style="overflow: auto; padding: 0;">
+          <iframe src="about:blank" sandbox="allow-scripts allow-same-origin" frameborder="0"></iframe>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">확인</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">닫기</button>
         </div>
       </div>
     </div>
@@ -88,13 +85,25 @@
     var body = $('.modal-body', modal);
     var footer = $('.modal-footer', modal);
     var headerheight = parseInt(header.css('height')) + parseInt(header.css('padding-top')) + parseInt(header.css('padding-bottom'));
-    var bodypaddings = parseInt(body.css('padding-top')) + parseInt(body.css('padding-bottom'));
-    var footerheight = parseInt(footer.css('height'));
-    var height = $(window).height() - headerheight - bodypaddings - footerheight;
+    var footerheight = parseInt(footer.css('height')) + parseInt(footer.css('padding-top')) + parseInt(footer.css('padding-bottom'));
+    var height = $(window).height() - headerheight - footerheight;
     return body.css('max-height', '' + height + 'px');
   }
-  $('.modal').on('shown.bs.modal', fitModalBody.bind(null, ($('.modal'))));
-  $(window).resize(fitModalBody.bind(null, ($('.modal'))));
+  $(window).resize(fitModalBody.bind(null, ($('#njp-modal'))));
+  var modalIframe = $('#njp-modal iframe').get(0);
+  modalIframe.onload = function () {
+    var modalWindow = modalIframe.contentWindow;
+    modalWindow.init(croquis);
+    $('#njp-modal .modal-title').get(0).innerHTML = modalWindow.title;
+    $(modalIframe).css('width', '100%');
+    $(modalIframe).css('height', $(modalIframe.contentWindow.document).height());
+    fitModalBody($('#njp-modal'));
+  };
+  function showModal(path) {
+    modalIframe.src = path;
+    $('#njp-modal').modal('show');
+  }
+  showModal('modal/brush_setting.html');
   </script>
 </body>
 </html>

@@ -141,7 +141,7 @@ function makeViewport(croquis, option, callback) {
                             .css('margin', '0')
                             .css('overflow', 'hidden')
                             .css('background-color', option.background);
-    $(viewportDocument.body).parent().css('cursor', 'crosshair');
+    $(viewportDocument.documentElement).css('cursor', 'crosshair');
     $(viewportDocument).on('mouseenter', showBrushPointer)
                        .on('mouseleave', hideBrushPointer)
                        .on('mousemove', moveBrushPointer);
