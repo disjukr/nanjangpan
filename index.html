@@ -70,6 +70,7 @@
     }
     function down(e) {
       var rc = relativeCoord(e.clientX, e.clientY);
+      global.croquis.setPaintingKnockout(wintab.isEraser());
       global.croquis.down(rc.x, rc.y, pressure());
       $(viewportDocument.body).parent().css('cursor', 'none');
       $(viewportDocument).on('mousemove', move)

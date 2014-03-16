@@ -10,7 +10,7 @@ char* gpszProgramName = "node_wintab";
 
 #include "MSGPACK.H"
 
-#define PACKETDATA (PK_X | PK_Y | PK_BUTTONS | PK_NORMAL_PRESSURE)
+#define PACKETDATA (PK_X | PK_Y | PK_NORMAL_PRESSURE | PK_STATUS)
 #define PACKETMODE PK_BUTTONS
 #include "PKTDEF.H"
 
@@ -22,6 +22,7 @@ int32_t pen_y = -1;
 int32_t pen_pressure = -1;
 int32_t pressure_min = -1;
 int32_t pressure_max = -1;
+bool is_eraser = FALSE;
 
 void get_pressure(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = Isolate::GetCurrent();
@@ -39,6 +40,12 @@ void get_pressure_max(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     args.GetReturnValue().Set(NumberObject::New(pressure_max));
+}
+
+void check_eraser(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope(isolate);
+    args.GetReturnValue().Set(BooleanObject::New(is_eraser));
 }
 
 HINSTANCE hinst;
@@ -125,6 +132,7 @@ LRESULT msgLoop(HWND hwnd, unsigned msg, WPARAM wp, LPARAM lp) {
             pen_x = (int32_t) pkt.pkX;
             pen_y = (int32_t) pkt.pkY;
             pen_pressure = (int32_t) pkt.pkNormalPressure;
+            is_eraser = (bool) (pkt.pkStatus & TPS_INVERT);
         }
         break;
     case WT_CTXOVERLAP:
@@ -134,6 +142,7 @@ LRESULT msgLoop(HWND hwnd, unsigned msg, WPARAM wp, LPARAM lp) {
         pen_x = -1;
         pen_y = -1;
         pen_pressure = -1;
+        is_eraser = FALSE;
         break;
     default:
         return (LRESULT) 0L;
@@ -165,6 +174,7 @@ void init(Handle<Object> exports) {
     NODE_SET_METHOD(exports, "pressure", get_pressure);
     NODE_SET_METHOD(exports, "minPressure", get_pressure_min);
     NODE_SET_METHOD(exports, "maxPressure", get_pressure_max);
+    NODE_SET_METHOD(exports, "isEraser", check_eraser);
     NODE_SET_METHOD(exports, "peekMessage", peek_message);
     NODE_SET_METHOD(exports, "checkOverlapped", check_overlapped);
     NODE_SET_METHOD(exports, "enableContext", enable_context);
