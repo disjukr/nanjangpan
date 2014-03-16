@@ -36,7 +36,7 @@
   var DEFAULT_CANVAS_WIDTH = 400;
   var DEFAULT_CANVAS_HEIGHT = 300;
   var wintab = require('./wintab/wintab.js');
-  var global = {
+  var _global = {
     croquis: new Croquis(),
     viewport: null,
     tool: {
@@ -44,7 +44,7 @@
     }
   };
   ;(function () { // manipulate croquis
-    with (global.croquis) {
+    with (_global.croquis) {
       lockHistory();
       setCanvasSize(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
       addLayer();
@@ -54,42 +54,42 @@
       unlockHistory();
       setToolStabilizeLevel(10);
       setToolStabilizeWeight(0.5);
-      setTool(global.tool.brush);
+      setTool(_global.tool.brush);
     }
   })();
-  global.viewport = makeViewport(global.croquis,
+  _global.viewport = makeViewport(_global.croquis,
     {
       width: '100%',
       height: '100%',
       background: '#333'
     }, function (viewportDocument) {
-    var relativeCoord = global.viewport.croquisElement.relativeCoord;
+    var relativeCoord = _global.viewport.croquisElement.relativeCoord;
     function pressure() {
       var pressure = wintab.pressure();
       return (pressure == null) ? 1 : pressure;
     }
     function down(e) {
       var rc = relativeCoord(e.clientX, e.clientY);
-      global.croquis.setPaintingKnockout(wintab.isEraser());
-      global.croquis.down(rc.x, rc.y, pressure());
+      _global.croquis.setPaintingKnockout(wintab.isEraser());
+      _global.croquis.down(rc.x, rc.y, pressure());
       $(viewportDocument.body).parent().css('cursor', 'none');
       $(viewportDocument).on('mousemove', move)
                          .on('mouseup', up);
     }
     function move(e) {
       var rc = relativeCoord(e.clientX, e.clientY);
-      global.croquis.move(rc.x, rc.y, pressure());
+      _global.croquis.move(rc.x, rc.y, pressure());
     }
     function up(e) {
       var rc = relativeCoord(e.clientX, e.clientY);
-      global.croquis.up(rc.x, rc.y, pressure());
+      _global.croquis.up(rc.x, rc.y, pressure());
       $(viewportDocument.body).parent().css('cursor', 'crosshair');
       $(viewportDocument).off('mousemove', move)
                          .off('mouseup', up);
     }
     $(viewportDocument).on('mousedown', down);
   });
-  $('#viewport').replaceWith(global.viewport);
+  $('#viewport').replaceWith(_global.viewport);
   function fitModalBody(modal) {
     var header = $('.modal-header', modal);
     var body = $('.modal-body', modal);
@@ -103,7 +103,7 @@
   var modalIframe = $('#njp-modal iframe').get(0);
   modalIframe.onload = function () {
     var modalWindow = modalIframe.contentWindow;
-    modalWindow.initialize(global);
+    modalWindow.initialize(_global);
     $('#njp-modal .modal-title').get(0).innerHTML = modalWindow.title;
     $(modalIframe).css('width', '100%')
                   .css('height', $(modalWindow.document).height());
@@ -111,7 +111,7 @@
   };
   $('#njp-modal').on('hidden.bs.modal', function () {
       var modalWindow = modalIframe.contentWindow;
-      modalWindow.terminate(global);
+      modalWindow.terminate(_global);
   });
   function showModal(path) {
     modalIframe.src = path;
