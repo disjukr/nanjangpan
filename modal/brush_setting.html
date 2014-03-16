@@ -26,10 +26,13 @@
   <input id="tangent-spread-slider" type="range" min="0" max="10" step="0.001">
   <script>
   window.title = "브러시 설정";
-  window.init = function (croquis) {
+  window.terminate = function (global) {
+    global.viewport.updateBrushPointer();
+  };
+  window.initialize = function (global) {
     var w = 400;
     var h = 100;
-    var brush = croquis.getTool();
+    var brush = global.tool.brush;
     var previewCroquis = new Croquis();
     var previewBrush = new Croquis.Brush();
     $('#canvas-area').append(previewCroquis.getDOMElement());
