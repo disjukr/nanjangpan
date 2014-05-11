@@ -142,9 +142,10 @@ function makeViewport(croquis, option, callback) {
                             .css('overflow', 'hidden')
                             .css('background-color', option.background);
     $(viewportDocument.documentElement).css('cursor', 'crosshair');
-    $(viewportDocument).on('mouseenter', showBrushPointer)
+    $(viewportDocument).on('mouseenter mousemove', showBrushPointer)
                        .on('mouseleave', hideBrushPointer)
                        .on('mousemove', moveBrushPointer);
+    $(parent.document).on('mousemove', hideBrushPointer);
     var viewportWindow = viewport.get(0).contentWindow;
     viewportWindow.onscroll = function () { // for ie
       viewportWindow.scrollTo(0, 0);
