@@ -1,0 +1,52 @@
+@font-face{
+    font-family: '나눔바른고딕';
+    src: url('/assets/font/NanumBarunGothic.ttf') format('truetype');
+}
+html, body {
+    font-family: '나눔바른고딕';
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+input[type="color"] {
+    margin: 0;
+    padding: 0;
+    width: 25px;
+    height: 20px;
+    background-color: #bbb;
+    border: none;
+}
+button {
+    font-size: 10px;
+    background-color: #ddd;
+    border: 1px outset;
+}
+button:active {
+    background-color: #bbb;
+    border: 1px inset;
+}
+#ui {
+    position: absolute;
+    width: 100%;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    -webkit-user-select: none;
+}
+#ui .bar {
+    padding: 3px 0;
+    overflow-x: hidden;
+    width: 100%;
+    background-color: #ddd;
+    border-bottom: 1px solid #888;
+}
+#ui .bar label {
+    margin-left: 10px;
+    font-size: 12px;
+    font-family: '나눔바른고딕';
+    color: #333;
+}
+#ui .bar label:after {
+    margin-left: 15px;
+    content: '|';
+}
