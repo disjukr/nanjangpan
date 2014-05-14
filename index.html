@@ -6,30 +6,63 @@
 </head>
 <body>
   <div id="viewport"></div>
-  <div id="ui">
-    <div class="bar">
-      <label>도구</label>
-      <button type="button">브러시</button> <button type="button">지우개</button>
+  <div class="left side-bar">
+    <div class="group">
+      <label class="title">도구</label>
+      <button type="button">브러시</button>
+      <button type="button">지우개</button>
     </div>
-    <div class="bar">
-      <label>브러시 속성</label>
-      <span id="brush-property-bar">
-        <input type="color">
-      </span>
+    <div class="group brush">
+      <label class="title">브러시</label>
+      <div class="prop">
+        <label for="brush-color">색상</label>
+        <input type="color" name="brush-color">
+      </div>
+      <div class="prop">
+        <label for="brush-size">크기</label>
+        <input type="number" name="brush-size">
+        <span>px</span>
+      </div>
+      <div class="prop">
+        <label for="brush-flow">흐름</label>
+        <input type="range" name="brush-flow">
+      </div>
+      <div class="prop">
+        <label for="brush-spacing">간격</label>
+        <input type="number" name="brush-spacing">
+        <span>%</span>
+      </div>
+      <div class="prop">
+        <label for="brush-angle">각도</label>
+        <input type="number" name="brush-angle">
+        <span>˚</span>
+      </div>
+      <div class="prop">
+        <label for="brush-rotate">비틀기</label>
+        <input type="checkbox" name="brush-rotate">
+      </div>
+      <div class="prop">
+        <label class="block" for="brush-normal-spread">수직분산</label>
+        <input class="line" type="number" name="brush-normal-spread">
+        <span>%</span>
+      </div>
+      <div class="prop">
+        <label class="block" for="brush-tangent-spread">평행분산</label>
+        <input class="line" type="number" name="brush-tangent-spread">
+        <span>%</span>
+      </div>
     </div>
   </div>
   <script src="js/jquery-1.11.0.min.js"></script>
   <script src="js/croquis.js"></script>
   <script src="js/viewport.js"></script>
+  <script src="js/init_tool.js"></script>
   <script>
   var DEFAULT_CANVAS_WIDTH = 400;
   var DEFAULT_CANVAS_HEIGHT = 300;
   var wintab = require('./wintab/wintab.js');
   var croquis = new Croquis();
   var viewport = null;
-  var tool = {
-    brush: new Croquis.Brush()
-  };
   ;(function () { // manipulate croquis
     with (croquis) {
       lockHistory();
@@ -78,6 +111,7 @@
   });
   $('#viewport').replaceWith(viewport);
   </script>
-  <script src="ui.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>

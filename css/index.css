@@ -1,14 +1,77 @@
 @font-face{
     font-family: '나눔바른고딕';
-    src: url('/assets/font/NanumBarunGothic.ttf') format('truetype');
+    src: url('../assets/font/NanumBarunGothic.ttf') format('truetype');
 }
 html, body {
-    font-family: '나눔바른고딕';
+    overflow: hidden;
     margin: 0;
     width: 100%;
     height: 100%;
+    font-family: '나눔바른고딕';
 }
-input[type="color"] {
+button {
+    height: 20px;
+    font-size: 10px;
+    background-color: #fff;
+    border: 1px outset;
+}
+button:hover {
+    cursor: pointer;
+    background-color: #ddd;
+}
+button:active {
+    background-color: #bbb;
+    border: 1px inset;
+}
+.side-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 150px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 0 0 70px -15px #000;
+}
+.side-bar > .group {
+    margin: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+.side-bar > .group label {
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 10px;
+    font-family: '나눔바른고딕';
+    font-size: 12px;
+    color: #333;
+}
+.side-bar > .group label.block {
+    display: block;
+}
+.side-bar > .group > label.title {
+    display: block;
+    margin-left: 0;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.side-bar > .group > .prop {
+    margin: 0;
+    margin-top: 5px;
+}
+.side-bar > .group > .prop:first-child {
+    margin-top: 0;
+}
+
+.side-bar > .group > .prop > * {
+    vertical-align: middle;
+}
+.side-bar > .group > .prop > span {
+    font-size: 11px;
+}
+.side-bar > .group.brush input[type="color"] {
     margin: 0;
     padding: 0;
     width: 25px;
@@ -16,37 +79,16 @@ input[type="color"] {
     background-color: #bbb;
     border: none;
 }
-button {
-    font-size: 10px;
-    background-color: #ddd;
-    border: 1px outset;
+.side-bar > .group.brush input[type="number"] {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
 }
-button:active {
-    background-color: #bbb;
-    border: 1px inset;
+.side-bar > .group.brush input[type="number"].line {
+    margin-left: 20px;
+    width: 70px;
 }
-#ui {
-    position: absolute;
-    width: 100%;
-    overflow: hidden;
-    top: 0;
-    left: 0;
-    -webkit-user-select: none;
-}
-#ui .bar {
-    padding: 3px 0;
-    overflow-x: hidden;
-    width: 100%;
-    background-color: #ddd;
-    border-bottom: 1px solid #888;
-}
-#ui .bar label {
-    margin-left: 10px;
-    font-size: 12px;
-    font-family: '나눔바른고딕';
-    color: #333;
-}
-#ui .bar label:after {
-    margin-left: 15px;
-    content: '|';
+.side-bar > .group.brush input[type="range"] {
+    display: inline-block;
+    width: 70px;
 }
