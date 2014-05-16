@@ -7,49 +7,60 @@
 <body>
   <div id="viewport"></div>
   <div class="left side-bar">
-    <div class="group">
+    <div class="tool-select group">
       <label class="title">도구</label>
-      <button type="button">브러시</button>
-      <button type="button">지우개</button>
+      <button type="button" name="brush">브러시</button>
+      <button type="button" name="eraser">지우개</button>
     </div>
-    <div class="group brush">
+    <div class="brush tool group">
       <label class="title">브러시</label>
       <div class="prop">
-        <label for="brush-color">색상</label>
-        <input type="color" name="brush-color">
+        <label for="color">색상</label>
+        <input type="color" name="color">
       </div>
       <div class="prop">
-        <label for="brush-size">크기</label>
-        <input type="number" name="brush-size">
+        <label for="size">크기</label>
+        <input type="number" name="size">
         <span>px</span>
       </div>
       <div class="prop">
-        <label for="brush-flow">흐름</label>
-        <input type="range" name="brush-flow">
+        <label for="flow">흐름</label>
+        <input type="range" name="flow">
       </div>
       <div class="prop">
-        <label for="brush-spacing">간격</label>
-        <input type="number" name="brush-spacing">
+        <label for="spacing">간격</label>
+        <input type="number" name="spacing">
         <span>%</span>
       </div>
       <div class="prop">
-        <label for="brush-angle">각도</label>
-        <input type="number" name="brush-angle">
+        <label for="angle">각도</label>
+        <input type="number" name="angle">
         <span>˚</span>
       </div>
       <div class="prop">
-        <label for="brush-rotate">비틀기</label>
-        <input type="checkbox" name="brush-rotate">
+        <label for="rotate">비틀기</label>
+        <input type="checkbox" name="rotate">
       </div>
       <div class="prop">
-        <label class="block" for="brush-normal-spread">수직분산</label>
-        <input class="line" type="number" name="brush-normal-spread">
+        <label class="block" for="normal-spread">수직분산</label>
+        <input class="line" type="number" name="normal-spread">
         <span>%</span>
       </div>
       <div class="prop">
-        <label class="block" for="brush-tangent-spread">평행분산</label>
-        <input class="line" type="number" name="brush-tangent-spread">
+        <label class="block" for="tangent-spread">평행분산</label>
+        <input class="line" type="number" name="tangent-spread">
         <span>%</span>
+      </div>
+    </div>
+    <div class="stabilizer tool group">
+      <label class="title">손떨림 보정</label>
+      <div class="prop">
+        <label for="level">단계</label>
+        <input type="number" name="level">
+      </div>
+      <div class="prop">
+        <label for="weight">무게</label>
+        <input type="range" name="weight">
       </div>
     </div>
   </div>

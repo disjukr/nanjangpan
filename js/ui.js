@@ -1,117 +1,191 @@
+// change tool ui
 ;(function () {
-    function checkbox($input, options) {
-        with (options) {
-            $input.prop('checked', get());
-            $input.on('change', function () {
-                set($input.is(':checked'));
+    var $toolSelectGroup = $('.group.tool-select');
+    function select(option) {
+        var selector = 'button[name="' + option.name + '"]';
+        $(selector, $toolSelectGroup).click(function () {
+            $('.tool.group:visible').hide();
+            option.opens.forEach(function (group) {
+                $(group).show();
             });
-        }
+        });
     }
-    function color($input, options) {
-        with (options) {
-            $input.val(get());
-            $input.on('change', function () {
-                set($input.val());
-            });
-        }
+    function selects(options) {
+        options.forEach(function (option) {
+            select(option);
+        });
     }
-    function number($input, options) {
-        with (options) {
-            $input.val(get());
-            $input.attr('min', min);
-            $input.attr('max', max);
-            $input.attr('step', step);
-            $input.on('keyup change', function () {
-                set($input.val());
-            });
+    selects([
+        {
+            name: 'brush',
+            opens: [
+                '.brush.tool.group',
+                '.stabilizer.tool.group'
+            ]
+        },
+        {
+            name: 'eraser',
+            opens: [
+                '.eraser.tool.group',
+                '.stabilizer.tool.group'
+            ]
         }
-    }
-    function range($input, options) {
-        with (options) {
-            $input.val(get());
-            $input.attr('min', min);
-            $input.attr('max', max);
-            $input.attr('step', step);
-            $input.on('change', function () {
-                set($input.val());
-            });
+    ]);
+})();
+
+// ui def
+;(function () {
+    var input = {
+        'checkbox': function ($input, options) {
+            with (options) {
+                $input.prop('checked', get());
+                $input.on('change', function () {
+                    set($input.is(':checked'));
+                });
+            }
+        },
+        'color': function ($input, options) {
+            with (options) {
+                $input.val(get());
+                $input.on('change', function () {
+                    set($input.val());
+                });
+            }
+        },
+        'number': function ($input, options) {
+            with (options) {
+                $input.attr('min', min);
+                $input.attr('max', max);
+                $input.attr('step', step);
+                $input.val(get());
+                $input.on('keyup change', function () {
+                    $input.val(Math.min(max, Math.max(min, $input.val())));
+                    set($input.val());
+                });
+            }
+        },
+        'range': function ($input, options) {
+            with (options) {
+                $input.attr('min', min);
+                $input.attr('max', max);
+                $input.attr('step', step);
+                $input.val(get());
+                $input.on('change', function () {
+                    set($input.val());
+                });
+            }
         }
+    };
+    function group(group, options) {
+        options.forEach(function (option) {
+            var $input = $('input[name="' + option.name + '"]', $(group));
+            input[option.type]($input, option);
+        });
     }
-    var $brushGroup = $('.group.brush');
-    var $brushColor = $('input[name="brush-color"]', $brushGroup);
-    var $brushSize = $('input[name="brush-size"]', $brushGroup);
-    var $brushFlow = $('input[name="brush-flow"]', $brushGroup);
-    var $brushSpacing = $('input[name="brush-spacing"]', $brushGroup);
-    var $brushAngle = $('input[name="brush-angle"]', $brushGroup);
-    var $brushRotate = $('input[name="brush-rotate"]', $brushGroup);
-    var $brushNormalSpread = $('input[name="brush-normal-spread"]', $brushGroup);
-    var $brushTangentSpread = $('input[name="brush-tangent-spread"]', $brushGroup);
-    color($brushColor, {
-        get: tool.brush.getColor,
-        set: tool.brush.setColor
-    });
-    number($brushSize, {
-        get: tool.brush.getSize,
-        set: function (val) {
-            tool.brush.setSize(val);
-            viewport.updateBrushPointer();
+    group('.brush.tool.group', [
+        {
+            name: 'color',
+            type: 'color',
+            get: tool.brush.getColor,
+            set: tool.brush.setColor
         },
-        min: 0,
-        max: 500,
-        step: 1
-    });
-    range($brushFlow, {
-        get: tool.brush.getFlow,
-        set: tool.brush.setFlow,
-        min: 0,
-        max: 1,
-        step: 0.001
-    });
-    number($brushSpacing, {
-        get: function () {
-            return tool.brush.getSpacing() * 100;
+        {
+            name: 'size',
+            type: 'number',
+            get: tool.brush.getSize,
+            set: function (val) {
+                tool.brush.setSize(val);
+                viewport.updateBrushPointer();
+            },
+            min: 0,
+            max: 500,
+            step: 1
         },
-        set: function (val) {
-            tool.brush.setSpacing(val * 0.01);
+        {
+            name: 'flow',
+            type: 'range',
+            get: tool.brush.getFlow,
+            set: tool.brush.setFlow,
+            min: 0,
+            max: 1,
+            step: 0.001
         },
-        min: 0,
-        max: 10000,
-        step: 1
-    });
-    number($brushAngle, {
-        get: tool.brush.getAngle,
-        set: function (val) {
-            tool.brush.setAngle(val);
-            viewport.updateBrushPointer();
+        {
+            name: 'spacing',
+            type: 'number',
+            get: function () {
+                return tool.brush.getSpacing() * 100;
+            },
+            set: function (val) {
+                tool.brush.setSpacing(val * 0.01);
+            },
+            min: 0,
+            max: 10000,
+            step: 1
         },
-        min: 0,
-        max: 360,
-        step: 1
-    });
-    checkbox($brushRotate, {
-        get: tool.brush.getRotateToDirection,
-        set: tool.brush.setRotateToDirection
-    });
-    number($brushNormalSpread, {
-        get: function () {
-            return tool.brush.getNormalSpread() * 100;
+        {
+            name: 'angle',
+            type: 'number',
+            get: tool.brush.getAngle,
+            set: function (val) {
+                tool.brush.setAngle(val);
+                viewport.updateBrushPointer();
+            },
+            min: 0,
+            max: 360,
+            step: 1
         },
-        set: function (val) {
-            tool.brush.setNormalSpread(val * 0.01);
+        {
+            name: 'rotate',
+            type: 'checkbox',
+            get: tool.brush.getRotateToDirection,
+            set: tool.brush.setRotateToDirection
         },
-        min: 0,
-        max: 10000,
-        step: 1
-    });
-    number($brushTangentSpread, {
-        get: function () {
-            return tool.brush.getTangentSpread() * 100;
+        {
+            name: 'normal-spread',
+            type: 'number',
+            get: function () {
+                return tool.brush.getNormalSpread() * 100;
+            },
+            set: function (val) {
+                tool.brush.setNormalSpread(val * 0.01);
+            },
+            min: 0,
+            max: 10000,
+            step: 1
         },
-        set: function (val) {
-            tool.brush.setTangentSpread(val * 0.01);
+        {
+            name: 'tangent-spread',
+            type: 'number',
+            get: function () {
+                return tool.brush.getTangentSpread() * 100;
+            },
+            set: function (val) {
+                tool.brush.setTangentSpread(val * 0.01);
+            },
+            min: 0,
+            max: 10000,
+            step: 1
+        }
+    ]);
+    group('.stabilizer.tool.group', [
+        {
+            name: 'level',
+            type: 'number',
+            get: croquis.getToolStabilizeLevel,
+            set: croquis.setToolStabilizeLevel,
+            min: 0,
+            max: 50,
+            step: 1
         },
-        min: 0,
-        max: 10000,
-        step: 1
-    });
+        {
+            name: 'weight',
+            type: 'range',
+            get: croquis.getToolStabilizeWeight,
+            set: croquis.setToolStabilizeWeight,
+            min: 0.2,
+            max: 0.8,
+            step: 0.001
+        }
+    ]);
 })();
