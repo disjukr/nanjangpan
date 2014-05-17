@@ -1,39 +1,3 @@
-// change tool ui
-;(function () {
-    var $toolSelectGroup = $('.group.tool-select');
-    function select(option) {
-        var selector = 'button[name="' + option.name + '"]';
-        $(selector, $toolSelectGroup).click(function () {
-            $('.tool.group:visible').hide();
-            option.opens.forEach(function (group) {
-                $(group).show();
-            });
-        });
-    }
-    function selects(options) {
-        options.forEach(function (option) {
-            select(option);
-        });
-    }
-    selects([
-        {
-            name: 'brush',
-            opens: [
-                '.brush.tool.group',
-                '.stabilizer.tool.group'
-            ]
-        },
-        {
-            name: 'eraser',
-            opens: [
-                '.eraser.tool.group',
-                '.stabilizer.tool.group'
-            ]
-        }
-    ]);
-})();
-
-// ui def
 ;(function () {
     var input = {
         'checkbox': function ($input, options) {
@@ -162,6 +126,86 @@
             },
             set: function (val) {
                 tool.brush.setTangentSpread(val * 0.01);
+            },
+            min: 0,
+            max: 10000,
+            step: 1
+        }
+    ]);
+    group('.eraser.tool.group', [
+        {
+            name: 'size',
+            type: 'number',
+            get: tool.eraser.getSize,
+            set: function (val) {
+                tool.eraser.setSize(val);
+                viewport.updateBrushPointer();
+            },
+            min: 0,
+            max: 500,
+            step: 1
+        },
+        {
+            name: 'flow',
+            type: 'range',
+            get: tool.eraser.getFlow,
+            set: tool.eraser.setFlow,
+            min: 0,
+            max: 1,
+            step: 0.001
+        },
+        {
+            name: 'spacing',
+            type: 'number',
+            get: function () {
+                return tool.eraser.getSpacing() * 100;
+            },
+            set: function (val) {
+                tool.eraser.setSpacing(val * 0.01);
+            },
+            min: 0,
+            max: 10000,
+            step: 1
+        },
+        {
+            name: 'angle',
+            type: 'number',
+            get: tool.eraser.getAngle,
+            set: function (val) {
+                tool.eraser.setAngle(val);
+                viewport.updateBrushPointer();
+            },
+            min: 0,
+            max: 360,
+            step: 1
+        },
+        {
+            name: 'rotate',
+            type: 'checkbox',
+            get: tool.eraser.getRotateToDirection,
+            set: tool.eraser.setRotateToDirection
+        },
+        {
+            name: 'normal-spread',
+            type: 'number',
+            get: function () {
+                return tool.eraser.getNormalSpread() * 100;
+            },
+            set: function (val) {
+                tool.eraser.setNormalSpread(val * 0.01);
+            },
+            min: 0,
+            max: 10000,
+            step: 1
+        },
+        {
+            name: 'tangent-spread',
+            type: 'number',
+            get: function () {
+                return tool.eraser.getTangentSpread() * 100;
+            },
+            set: function (val) {
+                tool.eraser.setTangentSpread(val * 0.01);
             },
             min: 0,
             max: 10000,

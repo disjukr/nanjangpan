@@ -52,6 +52,42 @@
         <span>%</span>
       </div>
     </div>
+    <div class="eraser tool group">
+      <label class="title">지우개</label>
+      <div class="prop">
+        <label for="size">크기</label>
+        <input type="number" name="size">
+        <span>px</span>
+      </div>
+      <div class="prop">
+        <label for="flow">흐름</label>
+        <input type="range" name="flow">
+      </div>
+      <div class="prop">
+        <label for="spacing">간격</label>
+        <input type="number" name="spacing">
+        <span>%</span>
+      </div>
+      <div class="prop">
+        <label for="angle">각도</label>
+        <input type="number" name="angle">
+        <span>˚</span>
+      </div>
+      <div class="prop">
+        <label for="rotate">비틀기</label>
+        <input type="checkbox" name="rotate">
+      </div>
+      <div class="prop">
+        <label class="block" for="normal-spread">수직분산</label>
+        <input class="line" type="number" name="normal-spread">
+        <span>%</span>
+      </div>
+      <div class="prop">
+        <label class="block" for="tangent-spread">평행분산</label>
+        <input class="line" type="number" name="tangent-spread">
+        <span>%</span>
+      </div>
+    </div>
     <div class="stabilizer tool group">
       <label class="title">손떨림 보정</label>
       <div class="prop">
@@ -64,17 +100,17 @@
       </div>
     </div>
   </div>
-  <script src="js/jquery-1.11.0.min.js"></script>
+  <script src="lib/jQuery/jquery-1.11.0.min.js"></script>
   <script src="js/croquis.js"></script>
   <script src="js/viewport.js"></script>
-  <script src="js/init_tool.js"></script>
+  <script src="js/tool.js"></script>
   <script>
   var DEFAULT_CANVAS_WIDTH = 400;
   var DEFAULT_CANVAS_HEIGHT = 300;
   var wintab = require('./wintab/wintab.js');
   var croquis = new Croquis();
   var viewport = null;
-  ;(function () { // manipulate croquis
+  ;(function () { // init croquis
     with (croquis) {
       lockHistory();
       setCanvasSize(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
@@ -85,9 +121,9 @@
       unlockHistory();
       setToolStabilizeLevel(10);
       setToolStabilizeWeight(0.5);
-      setTool(tool.brush);
     }
   })();
+  selectTool['brush']();
   viewport = makeViewport(croquis,
     {
       width: '100%',
@@ -100,8 +136,22 @@
       return (pressure == null) ? 1 : pressure;
     }
     function down(e) {
+      var itWasBrush = false;
+      if (croquis.getTool() === tool['brush']) {
+        itWasBrush = true;
+      }
+      if (wintab.isEraser()) {
+        selectTool['eraser']();
+      }
+      function onup() {
+        if (itWasBrush) {
+          selectTool['brush']();
+          itWasBrush = false;
+        }
+        croquis.removeEventListener('onup', onup);
+      }
+      croquis.addEventListener('onup', onup);
       var rc = relativeCoord(e.clientX, e.clientY);
-      croquis.setPaintingKnockout(wintab.isEraser());
       croquis.down(rc.x, rc.y, pressure());
       $(viewportDocument.body).parent().css('cursor', 'none');
       $(viewportDocument).on('mousemove', move)
