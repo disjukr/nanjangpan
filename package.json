@@ -1,6 +1,7 @@
 {
   "main": "index.html",
   "name": "Nanjangpan",
+  "single-instance": false,
   "window": {
     "title": "Nanjangpan",
     "toolbar": true,

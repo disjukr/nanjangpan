@@ -115,7 +115,46 @@
   var wintab = require('./wintab/wintab.js');
   var croquis = new Croquis();
   var viewport = null;
-  ;(function () { // init croquis
+  ;(function () {
+    var fs = require('fs');
+    var path = require('path');
+    var gui = require('nw.gui');
+    var argv = gui.App.argv;
+    var imagePath = argv.shift();
+    var imageMimeType = null;
+    if (typeof imagePath !== 'undefined') {
+      switch (path.extname(imagePath)) {
+      case '.jpg': case '.jpeg':
+        imageMimeType = 'image/jpeg';
+        break;
+      case '.png':
+        imageMimeType = 'image/png';
+        break;
+      case '.webp':
+        imageMimeType = 'image/webp';
+        break;
+      default:
+        alert('지원하지 않는 파일 형식입니다.');
+        break;
+      }
+      if (imageMimeType !== null) {
+        var imageFile = fs.readFileSync(imagePath);
+        var imageDataUrl = [
+          'data:', imageMimeType, ';base64,',
+          imageFile.toString('base64')
+        ].join('');
+        console.log(imageDataUrl);
+        // TODO: data url 까지는 얻어냈는데.. 이제 어떻게 하지?
+      }
+    }
+    while (argv.length > 0) {
+      ;(function (argument) {
+        var execCommand = [
+          process.execPath, '"' + argument + '"', '&'
+        ].join(' ');
+        require('child_process').exec(execCommand);
+      })(argv.shift());
+    }
     with (croquis) {
       lockHistory();
       setCanvasSize(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
@@ -127,8 +166,8 @@
       setToolStabilizeLevel(10);
       setToolStabilizeWeight(0.5);
     }
+    selectTool['brush']();
   })();
-  selectTool['brush']();
   viewport = makeViewport(croquis,
     {
       width: '100%',
