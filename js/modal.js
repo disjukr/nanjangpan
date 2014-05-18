@@ -1,7 +1,7 @@
 var showModal;
 var hideModal;
 
-;(function () {
+var modal_setup = function () {
     $modalZone = $('#modal-zone');
     $overlay = $('.overlay', $modalZone);
     showModal = function (modal) {
@@ -16,4 +16,4 @@ var hideModal;
     };
     hideModal(true);
     $overlay.click(hideModal);
-})();
+};

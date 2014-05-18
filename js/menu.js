@@ -1,4 +1,4 @@
-;(function () {
+var menu_setup = function () {
     var gui = require('nw.gui');
     function menu(items, option) {
         var menu = new gui.Menu(option);
@@ -17,13 +17,16 @@
             label: '열기',
             click: function () {
                 var selectOption = {
-                    accept: '.jpg,.jpeg,.png',
+                    accept: '.jpg,.jpeg,.png,.webp',
                     multiple: false
                 };
-                LZADialog.selectFile(selectOption, function(file) {
-                        console.log(file);
-                    }
-                );
+                function openFile(file) {
+                    var execCommand = [
+                        process.execPath, '"' + file.path + '"', '&'
+                    ].join(' ');
+                    require('child_process').exec(execCommand);
+                }
+                LZADialog.selectFile(selectOption, openFile);
             }
         },
         {
@@ -44,4 +47,4 @@
     ], {
         type: 'menubar'
     });
-})();
+};

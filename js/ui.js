@@ -1,4 +1,4 @@
-;(function () {
+var ui_setup = function () {
     var input = {
         'checkbox': function ($input, options) {
             with (options) {
@@ -232,4 +232,4 @@
             step: 0.001
         }
     ]);
-})();
+};

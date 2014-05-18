@@ -104,49 +104,48 @@
     <div class="overlay"></div>
     <div class="file-save modal"></div>
   </div>
+  <!-- 라이브러리 -->
   <script src="lib/jQuery/jquery-1.11.0.min.js"></script>
+  <script src="lib/async/async.js"></script>
   <script src="lib/LZADialog/lzadialog.js"></script>
+  <!-- 난장판 코드 -->
   <script src="js/croquis.js"></script>
   <script src="js/viewport.js"></script>
   <script src="js/tool.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/menu.js"></script>
   <script>
   var DEFAULT_CANVAS_WIDTH = 400;
   var DEFAULT_CANVAS_HEIGHT = 300;
   var wintab = require('./wintab/wintab.js');
   var croquis = new Croquis();
   var viewport = null;
+  //
+  function imageToCanvas(image) {
+    // 이미지가 이미 로딩돼있다고 가정
+    var canvas = $('<canvas>').get(0);
+    canvas.width = image.width;
+    canvas.height = image.height;
+    var context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+    return canvas;
+  }
+  function canvasToImageData(canvas) {
+    var context = canvas.getContext('2d');
+    return context.getImageData(0, 0, canvas.width, canvas.height);
+  }
+  function imageToImageData(image) {
+    return canvasToImageData(imageToCanvas(image));
+  }
+  </script>
+  <script>
   ;(function () {
     var fs = require('fs');
     var path = require('path');
     var gui = require('nw.gui');
     var argv = gui.App.argv;
     var imagePath = argv.shift();
-    var imageMimeType = null;
-    if (typeof imagePath !== 'undefined') {
-      switch (path.extname(imagePath)) {
-      case '.jpg': case '.jpeg':
-        imageMimeType = 'image/jpeg';
-        break;
-      case '.png':
-        imageMimeType = 'image/png';
-        break;
-      case '.webp':
-        imageMimeType = 'image/webp';
-        break;
-      default:
-        alert('지원하지 않는 파일 형식입니다.');
-        break;
-      }
-      if (imageMimeType !== null) {
-        var imageFile = fs.readFileSync(imagePath);
-        var imageDataUrl = [
-          'data:', imageMimeType, ';base64,',
-          imageFile.toString('base64')
-        ].join('');
-        console.log(imageDataUrl);
-        // TODO: data url 까지는 얻어냈는데.. 이제 어떻게 하지?
-      }
-    }
     while (argv.length > 0) {
       ;(function (argument) {
         var execCommand = [
@@ -155,18 +154,91 @@
         require('child_process').exec(execCommand);
       })(argv.shift());
     }
-    with (croquis) {
-      lockHistory();
-      setCanvasSize(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
-      addLayer();
-      fillLayer('#fff');
-      addLayer();
-      selectLayer(1);
-      unlockHistory();
-      setToolStabilizeLevel(10);
-      setToolStabilizeWeight(0.5);
-    }
-    selectTool['brush']();
+    async.waterfall([
+      function (callback) {
+        var imageMimeType = null;
+        if (typeof imagePath !== 'undefined') {
+          switch (path.extname(imagePath)) {
+          case '.jpg': case '.jpeg':
+            imageMimeType = 'image/jpeg';
+            break;
+          case '.png':
+            imageMimeType = 'image/png';
+            break;
+          case '.webp':
+            imageMimeType = 'image/webp';
+            break;
+          default:
+            alert('지원하지 않는 파일 형식입니다.');
+            break;
+          }
+          if (imageMimeType !== null) {
+            var imageFile = fs.readFileSync(imagePath);
+            var imageDataUrl = [
+              'data:', imageMimeType, ';base64,',
+              imageFile.toString('base64')
+            ].join('');
+            var image = new Image;
+            image.onload = function () {
+              callback(null, [imageToImageData(image)]);
+            };
+            image.src = imageDataUrl;
+          }
+          else {
+            callback(null, null);
+          }
+        }
+        else {
+          callback(null, null);
+        }
+      },
+      function (imageDataList, callback) {
+        if (imageDataList !== null) {
+          ;(function (croquis, imageDataList) {
+            if (imageDataList != null) {
+                if (imageDataList.length == 0)
+                    return;
+                croquis.lockHistory();
+                var first = imageDataList[0];
+                croquis.setCanvasSize(first.width, first.height);
+                for (var i = 0; i < imageDataList.length; ++i) {
+                    var current = imageDataList[i];
+                    if ((current.width != first.width) ||
+                        (current.height != first.height))
+                        throw 'all image data must have same size';
+                    croquis.addLayer();
+                    var context = croquis.getLayerCanvas(i).getContext('2d');
+                    context.putImageData(current, 0, 0);
+                }
+                croquis.selectLayer(0);
+                croquis.unlockHistory();
+            }
+        }).call(null, croquis, imageDataList);
+        }
+        else {
+          with (croquis) {
+            lockHistory();
+            setCanvasSize(DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT);
+            addLayer();
+            fillLayer('#fff');
+            addLayer();
+            selectLayer(1);
+            unlockHistory();
+          }
+        }
+        // other setting
+        croquis.setToolStabilizeLevel(10);
+        croquis.setToolStabilizeWeight(0.5);
+        selectTool['brush']();
+        callback(null);
+      },
+      function (callback) {
+        modal_setup();
+        ui_setup();
+        menu_setup();
+        callback(null);
+      }
+    ]);
   })();
   viewport = makeViewport(croquis,
     {
@@ -217,8 +289,5 @@
   $('#viewport').replaceWith(viewport);
   </script>
   <script src="js/layout.js"></script>
-  <script src="js/modal.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/menu.js"></script>
 </body>
 </html>
