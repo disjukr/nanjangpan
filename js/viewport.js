@@ -13,6 +13,8 @@ function makeViewport(croquis, option, callback) {
     var whitePointer;
     var canvasX;
     var canvasY;
+    if (option.checker != null)
+      $(croquisElement).css('background-image', option.checker);
     croquisElement.getTransform = function () {
       var transform = $(croquisElement).css('transform');
       var scale = 1;

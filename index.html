@@ -121,6 +121,8 @@
   var wintab = require('./wintab/wintab.js');
   var croquis = new Croquis();
   var viewport = null;
+  var checkerImage = createCheckerCanvas(20, 20, '#fff', '#ccc');
+  var checkerImageUrl = 'url(' + checkerImage.toDataURL() + ')';
   //
   function imageToCanvas(image) {
     // 이미지가 이미 로딩돼있다고 가정
@@ -137,6 +139,24 @@
   }
   function imageToImageData(image) {
     return canvasToImageData(imageToCanvas(image));
+  }
+  function createCheckerCanvas(width, height, colorA, colorB) {
+    width |= 0;
+    height |= 0;
+    var hw = width >> 1;
+    var hh = height >> 1;
+    var canvas = $('<canvas>').get(0);
+    canvas.width = width;
+    canvas.height = height;
+    var context = canvas.getContext('2d');
+    with (context) {
+      fillStyle = colorA;
+      fillRect(0, 0, width, height);
+      fillStyle = colorB;
+      fillRect(hw, 0, hw, hh);
+      fillRect(0, hh, hw, hh);
+    }
+    return canvas;
   }
   </script>
   <script>
@@ -244,7 +264,8 @@
     {
       width: '100%',
       height: '100%',
-      background: '#333'
+      background: '#333',
+      checker: checkerImageUrl
     }, function (viewportDocument) {
     var relativeCoord = viewport.croquisElement.relativeCoord;
     function pressure() {
