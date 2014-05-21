@@ -1,8 +1,9 @@
 var wintab = require('./build/Release/wintab');
 
+exports.hegemony = true;
 setInterval(function () {
     wintab.peekMessage();
-    if (wintab.checkOverlapped())
+    if (wintab.checkOverlapped() && exports.hegemony)
         wintab.enableContext();
 }, 1);
 

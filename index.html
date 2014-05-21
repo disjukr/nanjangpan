@@ -267,6 +267,13 @@
       background: '#333',
       checker: checkerImageUrl
     }, function (viewportDocument) {
+    var $viewportWindow = $(viewport.get(0).contentWindow);
+    $viewportWindow.blur(function () {
+      wintab.hegemony = false;
+    });
+    $viewportWindow.focus(function () {
+      wintab.hegemony = true;
+    });
     var relativeCoord = viewport.croquisElement.relativeCoord;
     function pressure() {
       var pressure = wintab.pressure();
